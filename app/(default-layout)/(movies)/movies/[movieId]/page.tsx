@@ -2,6 +2,49 @@ import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
 
+// async function add(a: number): Promise<number> {
+//   return a + 1
+// }
+
+// const res = await add(7)
+
+export const generateMetadata = async ({
+  params, // 동적 세그먼트
+  searchParams // 쿼리스트링
+}: {
+  params: Promise<{ movieId: string }>
+  searchParams: Promise<{ plot?: 'short' | 'full' }>
+}): Promise<Metadata> => {
+  const { movieId } = await params
+  const { plot = 'short' } = await searchParams
+  const res = await fetch(
+    //axios는 캐싱이 안돼서 next의 fetch를 사용
+    `https://omdbapi.com/?apikey=7035c60c&i=${movieId}&plot=${plot}`,
+    { cache: 'force-cache' } //주소 기준으로 캐싱
+  )
+
+  const movie: Movie = await res.json()
+
+  const title = movie.Title
+  const description = movie.Plot
+  const image = movie.Poster
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [image]
+    },
+    twitter: {
+      title,
+      description,
+      images: [image]
+    }
+  }
+}
+
 interface Movie {
   Title: string
   Plot: string
