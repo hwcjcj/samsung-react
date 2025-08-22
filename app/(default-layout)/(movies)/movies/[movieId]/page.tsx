@@ -1,6 +1,7 @@
 import axios from 'axios'
 import Image from 'next/image'
 import Link from 'next/link'
+import { Metadata } from 'next'
 
 // async function add(a: number): Promise<number> {
 //   return a + 1
